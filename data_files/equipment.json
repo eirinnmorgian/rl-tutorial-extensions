@@ -1,0 +1,13 @@
+{
+    "short_sword": {
+        "from_dungeon_level": [100, 1],
+        "slot": "MAIN_HAND",
+        "damage_dice": {
+            "number": 1,
+            "sides": 6
+        },
+        "char": "/",
+        "color": "sky",
+        "name": "Shortsword"
+    }
+}

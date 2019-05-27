@@ -21,6 +21,9 @@ from item_functions import heal, cast_lightning, cast_fireball, cast_confuse
 
 from random_utils import random_choice_from_dict, from_dungeon_level
 
+
+import json
+
 class GameMap:
     '''
     setup map and populate with rooms, tunnels, monsters.
@@ -162,6 +165,14 @@ class GameMap:
         number_of_monsters = randint(0, max_monsters_per_room)
         number_of_items = randint(0, max_items_per_room)
 
+
+        # try accessing data from json file
+        with open('data_files/equipment.json') as f:
+            equipment = json.load(f)
+
+        short_sword = equipment['short_sword']
+
+
         monster_chances = {
             'orc': 80, 
             'troll': from_dungeon_level([[15, 3], [30, 5], [60, 7]], self.dungeon_level)
@@ -169,7 +180,7 @@ class GameMap:
         
         item_chances = {
             'healing_potion': 35, 
-            'short_sword': from_dungeon_level([[100, 1]], self.dungeon_level),
+            'short_sword': from_dungeon_level([short_sword['from_dungeon_level']], self.dungeon_level),
             'shield': from_dungeon_level([[15, 4]], self.dungeon_level), 
             'lightning_scroll': from_dungeon_level([[25, 4]], self.dungeon_level), 
             'fireball_scroll': from_dungeon_level([[25, 6]], self.dungeon_level),
@@ -282,16 +293,23 @@ class GameMap:
                     )
 
                 elif item_choice == 'short_sword':
+
+                    slot = getattr(EquipmentSlots, short_sword['slot'])
+                    damage_dice = short_sword['damage_dice']
+                    char = short_sword['char']
+                    color = getattr(tcod, short_sword['color'])
+                    name = short_sword['name']
+
                     equippable_component = Equippable(
-                        EquipmentSlots.MAIN_HAND,
-                        damage_dice={'number': 1, 'sides': 6}
+                        slot,
+                        damage_dice=damage_dice
                     )
                     item = Entity(
                         x, 
                         y, 
-                        '/', 
-                        tcod.sky, 
-                        'Sword',
+                        char, 
+                        color, 
+                        name,
                         equippable=equippable_component
                     )
 
