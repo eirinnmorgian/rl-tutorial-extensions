@@ -169,7 +169,7 @@ class GameMap:
         
         item_chances = {
             'healing_potion': 35, 
-            'sword': from_dungeon_level([[5, 4]], self.dungeon_level),
+            'short_sword': from_dungeon_level([[100, 1]], self.dungeon_level),
             'shield': from_dungeon_level([[15, 4]], self.dungeon_level), 
             'lightning_scroll': from_dungeon_level([[25, 4]], self.dungeon_level), 
             'fireball_scroll': from_dungeon_level([[25, 6]], self.dungeon_level),
@@ -190,7 +190,7 @@ class GameMap:
 
                     # 80% chance of orc
                     # init fighter and ai components
-                    fighter_component = Fighter(hp=20, defense=0, power=4, xp=35)
+                    fighter_component = Fighter(hp=20, base_defense=10, base_damage=4, base_to_hit=2, xp=35)
                     ai_component = BasicMonster()
                     monster = Entity(
                         x, 
@@ -207,7 +207,7 @@ class GameMap:
 
                     # 20% chance of troll
                     # init fighter and ai components
-                    fighter_component = Fighter(hp=30, defense=2, power=8, xp=100)
+                    fighter_component = Fighter(hp=30, base_defense=12, base_damage=8, base_to_hit=4, xp=100)
                     ai_component = BasicMonster()
                     monster = Entity(
                         x, 
@@ -281,10 +281,10 @@ class GameMap:
                         item=item_component, 
                     )
 
-                elif item_choice == 'sword':
+                elif item_choice == 'short_sword':
                     equippable_component = Equippable(
                         EquipmentSlots.MAIN_HAND,
-                        power_bonus=3
+                        damage_dice={'number': 1, 'sides': 6}
                     )
                     item = Entity(
                         x, 

@@ -29,3 +29,16 @@ def random_choice_from_dict(choice_dict):
     chances = list(choice_dict.values())
 
     return choices[random_choice_index(chances)]
+
+
+def roll(dice_number, dice_sides):
+    count = 0
+    accumulator = 0
+
+    while count < dice_number:
+        accumulator += randint(1, dice_sides)
+        count += 1
+
+    print(accumulator)
+
+    return accumulator

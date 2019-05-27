@@ -72,8 +72,8 @@ def main_menu(con, background_image, screen_width, screen_height):
 def level_up_menu(con, header, player, menu_width, screen_width, screen_height):
     options = [
         'Constitution (+20 HP, from {0})'.format(player.fighter.max_hp),
-        'Strength (+1 attack, from {0})'.format(player.fighter.power),
-        'Agility (+1 defense, from {0})'.format(player.fighter.defense)
+        'Strength (+1 attack, from {0})'.format(player.fighter.base_damage),
+        'Agility (+1 defense, from {0})'.format(player.fighter.base_defense)
     ]
 
     menu(con, header, options, menu_width, screen_width, screen_height)
@@ -89,8 +89,9 @@ def character_screen(player, character_screen_width, character_screen_height, sc
     tcod.console_print_rect_ex(window, 0, 3, character_screen_width, character_screen_height, tcod.BKGND_NONE, tcod.LEFT, 'Experience: {0}'.format(player.level.current_xp))
     tcod.console_print_rect_ex(window, 0, 4, character_screen_width, character_screen_height, tcod.BKGND_NONE, tcod.LEFT, 'Experience to Level: {0}'.format(player.level.experience_to_next_level))
     tcod.console_print_rect_ex(window, 0, 6, character_screen_width, character_screen_height, tcod.BKGND_NONE, tcod.LEFT, 'Maximum HP: {0}'.format(player.fighter.max_hp))
-    tcod.console_print_rect_ex(window, 0, 7, character_screen_width, character_screen_height, tcod.BKGND_NONE, tcod.LEFT, 'Attack: {0}'.format(player.fighter.power))
-    tcod.console_print_rect_ex(window, 0, 8, character_screen_width, character_screen_height, tcod.BKGND_NONE, tcod.LEFT, 'Defense: {0}'.format(player.fighter.defense))
+    tcod.console_print_rect_ex(window, 0, 7, character_screen_width, character_screen_height, tcod.BKGND_NONE, tcod.LEFT, 'Attack: {0} to {1}'.format(player.fighter.damage_range[0], player.fighter.damage_range[1]))
+    tcod.console_print_rect_ex(window, 0, 8, character_screen_width, character_screen_height, tcod.BKGND_NONE, tcod.LEFT, 'To-hit bonus: {0}'.format(player.fighter.to_hit))
+    tcod.console_print_rect_ex(window, 0, 9, character_screen_width, character_screen_height, tcod.BKGND_NONE, tcod.LEFT, 'Defense: {0}'.format(player.fighter.defense))
 
 
     x = screen_width // 2 - character_screen_width // 2

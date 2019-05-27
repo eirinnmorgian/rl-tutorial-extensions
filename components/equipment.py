@@ -19,18 +19,19 @@ class Equipment:
 
         return bonus
 
+# change bonus to list and append weapon dice
     @property
-    def power_bonus(self):
+    def damage_dice(self):
 
-        bonus = 0
+        dice = []
 
         if self.main_hand and self.main_hand.equippable:
-            bonus += self.main_hand.equippable.power_bonus
+            dice.append(self.main_hand.equippable.damage_dice) 
 
         if self.off_hand and self.off_hand.equippable:
-            bonus += self.off_hand.equippable.power_bonus
+            dice.append(self.off_hand.equippable.damage_dice) 
 
-        return bonus
+        return dice
 
     @property
     def defense_bonus(self):
@@ -45,6 +46,19 @@ class Equipment:
 
         return bonus
     
+    @property
+    def to_hit_bonus(self):
+
+        bonus = 0
+
+        if self.main_hand and self.main_hand.equippable:
+            bonus += self.main_hand.equippable.to_hit_bonus
+
+        if self.off_hand and self.off_hand.equippable:
+            bonus += self.off_hand.equippable.to_hit_bonus
+
+        return bonus
+
 
     def toggle_equip(self, equippable_entity):
         results = []

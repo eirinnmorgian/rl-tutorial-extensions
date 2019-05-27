@@ -78,7 +78,7 @@ def get_constants():
 def get_game_variables(constants):
 
 # init components and compose them into the player
-    fighter_component = Fighter(hp=100, defense=1, power=2)
+    fighter_component = Fighter(hp=100, base_defense=11, base_damage=2, base_to_hit=1)
     inventory_component = Inventory(capacity=26)
     level_component = Level()
     equipment_component = Equipment()
@@ -99,8 +99,12 @@ def get_game_variables(constants):
     entities = [player]
 
     # instantiate starting weapon, add to inventory, and equip
-    equippable_component = Equippable(EquipmentSlots.MAIN_HAND, power_bonus=2)
+    dagger_dice = {'number': 1, 'sides': 4}
+
+    equippable_component = Equippable(EquipmentSlots.MAIN_HAND, damage_dice=dagger_dice)
+    
     dagger = Entity(0, 0, '-', tcod.sky, 'Dagger', equippable=equippable_component)
+    
     player.inventory.add_item(dagger)
     player.equipment.toggle_equip(dagger)
 
