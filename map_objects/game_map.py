@@ -170,6 +170,7 @@ class GameMap:
             monsters = json.load(f)
 
         orc = monsters['orc']
+        troll = monsters['troll']
 
 
         with open('data_files/equipment.json') as f:
@@ -180,10 +181,18 @@ class GameMap:
         long_sword = equipment['long_sword']
 
 
+        with open('data_files/consumables.json') as f:
+            consumables = json.load(f)
+
+        healing_potion = consumables['healing_potion']
+        confusion_scroll = consumables['confusion_scroll']
+        fireball_scroll = consumables['fireball_scroll']
+        lightning_scroll = consumables['lightning_scroll']
+
+
         monster_chances = {
             'orc': from_dungeon_level(orc['from_dungeon_level'], self.dungeon_level),
-
-            'troll': from_dungeon_level([[15, 3], [30, 5], [60, 7]], self.dungeon_level)
+            'troll': from_dungeon_level(troll['from_dungeon_level'], self.dungeon_level)
         }
         
         item_chances = {
@@ -191,10 +200,10 @@ class GameMap:
             'long_sword': from_dungeon_level(long_sword['from_dungeon_level'], self.dungeon_level),            
             'small_shield': from_dungeon_level(small_shield['from_dungeon_level'], self.dungeon_level), 
 
-            'healing_potion': from_dungeon_level([[35, 1]], self.dungeon_level),
-            'lightning_scroll': from_dungeon_level([[25, 4]], self.dungeon_level), 
-            'fireball_scroll': from_dungeon_level([[25, 6]], self.dungeon_level),
-            'confusion_scroll': from_dungeon_level([[10, 2]], self.dungeon_level) 
+            'healing_potion': from_dungeon_level(healing_potion['from_dungeon_level'], self.dungeon_level),
+            'confusion_scroll': from_dungeon_level(confusion_scroll['from_dungeon_level'], self.dungeon_level) 
+            'lightning_scroll': from_dungeon_level(lightning_scroll['from_dungeon_level'], self.dungeon_level), 
+            'fireball_scroll': from_dungeon_level(fireball_scroll['from_dungeon_level'], self.dungeon_level),
         }
 
         # place monsters
@@ -207,9 +216,8 @@ class GameMap:
             if not any([entity for entity in entities if entity.x == x and entity.y ==y]):
 
                 monster_choice = random_choice_from_dict(monster_chances)
-                if monster_choice == 'orc':
 
-                    # init fighter and ai components
+                if monster_choice == 'orc':
 
                     hp = orc['hp']
                     base_defense = orc['base_defense']
@@ -220,9 +228,10 @@ class GameMap:
                     color = getattr(tcod, orc['color'])
                     name = orc['name']
 
-
+                    # init fighter and ai components
                     fighter_component = Fighter(hp=hp, base_defense=base_defense, base_damage=base_damage, base_to_hit=base_to_hit, xp=xp)
                     ai_component = BasicMonster()
+
                     monster = Entity(
                         x, 
                         y, 
@@ -237,16 +246,25 @@ class GameMap:
 
                 elif monster_choice == 'troll':
 
-                    # 20% chance of troll
+                    hp = troll['hp']
+                    base_defense = troll['base_defense']
+                    base_damage = troll['base_damage']
+                    base_to_hit = troll['base_to_hit']
+                    xp = troll['xp']
+                    char = troll['char']
+                    color = getattr(tcod, troll['color'])
+                    name = troll['name']
+
                     # init fighter and ai components
-                    fighter_component = Fighter(hp=30, base_defense=12, base_damage=8, base_to_hit=4, xp=100)
+                    fighter_component = Fighter(hp=hp, base_defense=base_defense, base_damage=base_damage, base_to_hit=base_to_hit, xp=xp)
                     ai_component = BasicMonster()
+
                     monster = Entity(
                         x, 
                         y, 
-                        'T', 
-                        tcod.darker_green, 
-                        'Troll', 
+                        char, 
+                        color, 
+                        name, 
                         blocks=True,
                         render_order=RenderOrder.ACTOR,
                         fighter=fighter_component,
@@ -266,64 +284,98 @@ class GameMap:
                 # randomize dropped items
 
                 if item_choice == 'healing_potion':
+
+                    amount = healing_potion['amount']
+                    char = healing_potion['char']
+                    color = getattr(tcod, healing_potion['color'])
+                    name = healing_potion['name']
+
                     item_component = Item(
                         use_function=heal, 
-                        amount=40
+                        amount=amount
                     )
+
                     item = Entity(
                         x, 
                         y, 
-                        '!', 
-                        tcod.violet, 
-                        'Healing Potion', 
+                        char, 
+                        color, 
+                        name, 
                         render_order=RenderOrder.ITEM, 
                         item=item_component
                     )
 
                 elif item_choice == 'confusion_scroll':
+
+                    targeting = confusion_scroll['targeting']
+                    targeting_message = Message(confusion_scroll['targeting_message'], confusion_scroll['message_color'])
+                    char = confusion_scroll['char']
+                    color = getattr(tcod, confusion_scroll['color'])
+                    name = confusion_scroll['name']
+
                     item_component = Item(
                         use_function=cast_confuse, 
-                        targeting=True, 
-                        targeting_message=Message('Left-click an enemy to confuse it, or right-click to cancel', tcod.light_cyan),
+                        targeting=targeting, 
+                        targeting_message=targeting_message
                     )
-                    item = Entity(x, 
+
+                    item = Entity(
+                        x, 
                         y, 
-                        '#', 
-                        tcod.light_pink, 
-                        'Confusion Scroll', 
+                        char, 
+                        color, 
+                        name, 
                         render_order=RenderOrder.ITEM, 
                         item=item_component, 
                     )
 
                 elif item_choice == 'fireball_scroll':
+
+                    targeting = fireball_scroll['targeting']
+                    targeting_message = Message(fireball_scroll['targeting_message'], fireball_scroll['message_color'])
+                    damage = fireball_scroll['damage']
+                    radius = fireball_scroll['radius']
+                    char = fireball_scroll['char']
+                    color = getattr(tcod, fireball_scroll['color'])
+                    name = fireball_scroll['name']
+
                     item_component = Item(
                         use_function=cast_fireball, 
-                        targeting=True, 
-                        targeting_message=Message('Left-click a target tile for the fireball, or right-click to cancel', tcod.light_cyan),
-                        damage=25,
-                        radius=3
+                        targeting=targeting, 
+                        targeting_message=targeting_message,
+                        damage=damage,
+                        radius=radius
                     )
-                    item = Entity(x, 
+
+                     item = Entity(
+                        x, 
                         y, 
-                        '#', 
-                        tcod.red, 
-                        'Fireball Scroll', 
+                        char, 
+                        color, 
+                        name, 
                         render_order=RenderOrder.ITEM, 
                         item=item_component, 
                     )
 
                 elif item_choice == 'lightning_scroll':
+
+                    damage = lightning_scroll['damage']
+                    max_range = lightning_scroll['max_range']
+                    char = lightning_scroll['char']
+                    color = getattr(tcod, lightning_scroll['color'])
+                    name = lightning_scroll['name']
+
                     item_component = Item(
                         use_function=cast_lightning, 
-                        damage=40, 
-                        max_range=5
+                        damage=damage, 
+                        max_range=max_range
                     )
                     item = Entity(
                         x, 
                         y, 
-                        '#', 
-                        tcod.yellow, 
-                        'Lightning Scroll', 
+                        char, 
+                        color, 
+                        name, 
                         render_order=RenderOrder.ITEM, 
                         item=item_component, 
                     )

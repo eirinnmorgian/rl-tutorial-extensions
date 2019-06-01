@@ -9,5 +9,17 @@
         "char": "o",
         "color": "desaturated_green",
         "name": "Orc"
+    },
+
+    "troll": {
+        "from_dungeon_level": [[15, 3], [30, 5], [60, 7]],
+        "hp": 30,
+        "base_defense": 12,
+        "base_damage": 8,
+        "base_to_hit": 4,
+        "xp": 100,
+        "char": "T",
+        "color": "darker_green",
+        "name": "Troll"
     }
 }

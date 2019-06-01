@@ -1,0 +1,40 @@
+{
+    "healing_potion": {
+        "from_dungeon_level": [[35, 1]],
+        "amount": 40,
+        "char": "!",
+        "color": "violet",
+        "name": "Healing Potion"
+    },
+    
+    "confusion_scroll": {
+        "from_dungeon_level": [[10, 2]],
+        "targeting": 1,
+        "targeting_message": "Left-click an enemy to confuse it, or right-click to cancel",
+        "message_color": "light_cyan",
+        "char": "#",
+        "color": "light_pink",
+        "name": "Confusion Scroll"
+    },
+    
+    "fireball_scroll": {
+        "from_dungeon_level": [[25, 6]],
+        "targeting": 1,
+        "targeting_message": "Left-click a target tile for the fireball, or right-click to cancel",
+        "message_color": "light_cyan",
+        "damage": 25,
+        "radius": 3,
+        "char": "#",
+        "color": "red",
+        "name": "Fireball Scroll"
+    },
+    
+    "lightning_scroll": {
+        "from_dungeon_level": [[25, 4]],
+        "damage": 40,
+        "max_range": 5,
+        "char": "#",
+        "color": "light_cyan",
+        "name": "Lightning Scroll"
+    },
+}
