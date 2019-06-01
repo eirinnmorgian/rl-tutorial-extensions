@@ -1,4 +1,5 @@
 import tcod
+import json
 
 from components.fighter import Fighter, PassiveHealing
 from components.inventory import Inventory
@@ -77,19 +78,38 @@ def get_constants():
 
 def get_game_variables(constants):
 
-# init components and compose them into the player
-    passive_healing_component = PassiveHealing(turnover=10, rate=1)
-    fighter_component = Fighter(hp=100, base_defense=11, base_damage=2, base_to_hit=1, passive_healing=passive_healing_component)
-    inventory_component = Inventory(capacity=26)
+    with open('data_files/player.json') as f:
+        player_data = json.load(f)
+
+    passive_healing = player_data['passive_healing']
+    fighter = player_data['fighter']
+    inventory = player_data['inventory']
+    char = player_data['char']
+    color = getattr(tcod, player_data['color'])
+    name = player_data['name']
+
+    # init components and compose them into the player
+    passive_healing_component = PassiveHealing(
+        turnover=passive_healing['turnover'], 
+        rate=passive_healing['rate']
+    )
+    fighter_component = Fighter(
+        hp=fighter['hp'], 
+        base_defense=fighter['base_defense'], 
+        base_damage=fighter['base_damage'], 
+        base_to_hit=fighter['base_to_hit'], 
+        passive_healing=passive_healing_component
+    )
+    inventory_component = Inventory(capacity=inventory['capacity'])
     level_component = Level()
     equipment_component = Equipment()
 
     player = Entity(
         0, 
         0, 
-        '@', 
-        tcod.light_grey, 
-        'Player', 
+        char, 
+        color, 
+        name, 
         blocks=True, 
         render_order=RenderOrder.ACTOR, 
         fighter=fighter_component, 
@@ -100,14 +120,33 @@ def get_game_variables(constants):
     entities = [player]
 
     # instantiate starting weapon, add to inventory, and equip
-    dagger_dice = {'number': 1, 'sides': 4}
+    with open('data_files/equipment.json') as f:
+        equipment = json.load(f)
 
-    equippable_component = Equippable(EquipmentSlots.MAIN_HAND, damage_dice=dagger_dice)
-    
-    dagger = Entity(0, 0, '-', tcod.sky, 'Dagger', equippable=equippable_component)
-    
-    player.inventory.add_item(dagger)
-    player.equipment.toggle_equip(dagger)
+    dagger = equipment['dagger']  
+
+    slot = getattr(EquipmentSlots, dagger['slot'])
+    damage_dice = dagger['damage_dice']
+    char = dagger['char']
+    color = getattr(tcod, dagger['color'])
+    name = dagger['name']
+
+    equippable_component = Equippable(
+        slot,
+        damage_dice=damage_dice
+    )
+
+    starting_weapon = Entity(
+        0, 
+        0, 
+        char, 
+        color, 
+        name,
+        equippable=equippable_component
+    )
+
+    player.inventory.add_item(starting_weapon)
+    player.equipment.toggle_equip(starting_weapon)
 
     # init map 
     game_map = GameMap(constants['MAP_W'], constants['MAP_H'])

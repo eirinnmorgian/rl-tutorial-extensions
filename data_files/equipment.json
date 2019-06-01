@@ -11,6 +11,17 @@
         "name": "Shortsword"
     },
 
+    "dagger": {
+        "slot": "MAIN_HAND",
+        "damage_dice": {
+            "number": 1,
+            "sides": 4
+        },
+        "char": "-",
+        "color": "sky",
+        "name": "Dagger"
+    },
+
     "small_shield": {
         "from_dungeon_level": [[15, 8]],
         "slot": "OFF_HAND",

@@ -1,0 +1,18 @@
+{
+    "passive_healing": {
+        "turnover": 10,
+        "rate": 1
+    },
+    "fighter": {
+        "hp": 100,
+        "base_defense": 11,
+        "base_damage": 2,
+        "base_to_hit": 1
+    },
+    "inventory": {
+        "capacity": 26
+    },
+    "char": "@",
+    "color": "light_grey",
+    "name": "Player"
+}

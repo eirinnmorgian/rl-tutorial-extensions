@@ -201,7 +201,7 @@ class GameMap:
             'small_shield': from_dungeon_level(small_shield['from_dungeon_level'], self.dungeon_level), 
 
             'healing_potion': from_dungeon_level(healing_potion['from_dungeon_level'], self.dungeon_level),
-            'confusion_scroll': from_dungeon_level(confusion_scroll['from_dungeon_level'], self.dungeon_level) 
+            'confusion_scroll': from_dungeon_level(confusion_scroll['from_dungeon_level'], self.dungeon_level), 
             'lightning_scroll': from_dungeon_level(lightning_scroll['from_dungeon_level'], self.dungeon_level), 
             'fireball_scroll': from_dungeon_level(fireball_scroll['from_dungeon_level'], self.dungeon_level),
         }
@@ -347,7 +347,7 @@ class GameMap:
                         radius=radius
                     )
 
-                     item = Entity(
+                    item = Entity(
                         x, 
                         y, 
                         char, 
