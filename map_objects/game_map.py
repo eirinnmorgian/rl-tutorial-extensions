@@ -1,11 +1,15 @@
+# 3rd party imports
 import tcod
+import json
+
 from random import randint
 
+# local imports
 from entity import Entity
-
 from game_messages import Message
-
 from render_functions import RenderOrder
+from item_functions import heal, cast_lightning, cast_fireball, cast_confuse
+from random_utils import random_choice_from_dict, from_dungeon_level
 
 from map_objects.tile import Tile
 from map_objects.rectangle import Rect
@@ -17,12 +21,6 @@ from components.stairs import Stairs
 from components.equipment import EquipmentSlots
 from components.equippable import Equippable
 
-from item_functions import heal, cast_lightning, cast_fireball, cast_confuse
-
-from random_utils import random_choice_from_dict, from_dungeon_level
-
-
-import json
 
 class GameMap:
     '''
@@ -166,22 +164,34 @@ class GameMap:
         number_of_items = randint(0, max_items_per_room)
 
 
-        # try accessing data from json file
+        # get monster, equipment data from json file
+
+        with open('data_files/monsters.json') as f:
+            monsters = json.load(f)
+
+        orc = monsters['orc']
+
+
         with open('data_files/equipment.json') as f:
             equipment = json.load(f)
 
         short_sword = equipment['short_sword']
+        small_shield = equipment['small_shield']
+        long_sword = equipment['long_sword']
 
 
         monster_chances = {
-            'orc': 80, 
+            'orc': from_dungeon_level(orc['from_dungeon_level'], self.dungeon_level),
+
             'troll': from_dungeon_level([[15, 3], [30, 5], [60, 7]], self.dungeon_level)
         }
         
         item_chances = {
-            'healing_potion': 35, 
-            'short_sword': from_dungeon_level([short_sword['from_dungeon_level']], self.dungeon_level),
-            'shield': from_dungeon_level([[15, 4]], self.dungeon_level), 
+            'short_sword': from_dungeon_level(short_sword['from_dungeon_level'], self.dungeon_level),
+            'long_sword': from_dungeon_level(long_sword['from_dungeon_level'], self.dungeon_level),            
+            'small_shield': from_dungeon_level(small_shield['from_dungeon_level'], self.dungeon_level), 
+
+            'healing_potion': from_dungeon_level([[35, 1]], self.dungeon_level),
             'lightning_scroll': from_dungeon_level([[25, 4]], self.dungeon_level), 
             'fireball_scroll': from_dungeon_level([[25, 6]], self.dungeon_level),
             'confusion_scroll': from_dungeon_level([[10, 2]], self.dungeon_level) 
@@ -199,21 +209,32 @@ class GameMap:
                 monster_choice = random_choice_from_dict(monster_chances)
                 if monster_choice == 'orc':
 
-                    # 80% chance of orc
                     # init fighter and ai components
-                    fighter_component = Fighter(hp=20, base_defense=10, base_damage=4, base_to_hit=2, xp=35)
+
+                    hp = orc['hp']
+                    base_defense = orc['base_defense']
+                    base_damage = orc['base_damage']
+                    base_to_hit = orc['base_to_hit']
+                    xp = orc['xp']
+                    char = orc['char']
+                    color = getattr(tcod, orc['color'])
+                    name = orc['name']
+
+
+                    fighter_component = Fighter(hp=hp, base_defense=base_defense, base_damage=base_damage, base_to_hit=base_to_hit, xp=xp)
                     ai_component = BasicMonster()
                     monster = Entity(
                         x, 
                         y, 
-                        'o', 
-                        tcod.desaturated_green, 
-                        'Orc', 
+                        char, 
+                        color, 
+                        name, 
                         blocks=True,
                         render_order=RenderOrder.ACTOR,
                         fighter=fighter_component,
                         ai=ai_component
-                        )
+                    )
+
                 elif monster_choice == 'troll':
 
                     # 20% chance of troll
@@ -244,7 +265,22 @@ class GameMap:
                 item_choice = random_choice_from_dict(item_chances)
                 # randomize dropped items
 
-                if item_choice == 'confusion_scroll':
+                if item_choice == 'healing_potion':
+                    item_component = Item(
+                        use_function=heal, 
+                        amount=40
+                    )
+                    item = Entity(
+                        x, 
+                        y, 
+                        '!', 
+                        tcod.violet, 
+                        'Healing Potion', 
+                        render_order=RenderOrder.ITEM, 
+                        item=item_component
+                    )
+
+                elif item_choice == 'confusion_scroll':
                     item_component = Item(
                         use_function=cast_confuse, 
                         targeting=True, 
@@ -313,33 +349,46 @@ class GameMap:
                         equippable=equippable_component
                     )
 
-                elif item_choice == 'shield':
+                elif item_choice == 'long_sword':
+
+                    slot = getattr(EquipmentSlots, long_sword['slot'])
+                    damage_dice = long_sword['damage_dice']
+                    char = long_sword['char']
+                    color = getattr(tcod, long_sword['color'])
+                    name = long_sword['name']
+
                     equippable_component = Equippable(
-                        EquipmentSlots.OFF_HAND,
-                        defense_bonus=1
+                        slot,
+                        damage_dice=damage_dice
                     )
                     item = Entity(
                         x, 
                         y, 
-                        '[', 
-                        tcod.darker_orange, 
-                        'Shield',
+                        char, 
+                        color, 
+                        name,
                         equippable=equippable_component
                     )
 
-                elif item_choice == 'healing_potion':
-                    item_component = Item(
-                        use_function=heal, 
-                        amount=40
+                elif item_choice == 'small_shield':
+
+                    slot = getattr(EquipmentSlots, small_shield['slot'])
+                    defense_bonus = small_shield['defense_bonus']
+                    char = small_shield['char']
+                    color = getattr(tcod, small_shield['color'])
+                    name = small_shield['name']
+
+                    equippable_component = Equippable(
+                        slot,
+                        defense_bonus=defense_bonus
                     )
                     item = Entity(
                         x, 
                         y, 
-                        '!', 
-                        tcod.violet, 
-                        'Healing Potion', 
-                        render_order=RenderOrder.ITEM, 
-                        item=item_component
+                        char, 
+                        color, 
+                        name,
+                        equippable=equippable_component
                     )
 
                 entities.append(item)

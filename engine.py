@@ -123,12 +123,18 @@ def play_game(player, entities, game_map, message_log, game_state, con, panel, c
                 else:
                     player.move(dx, dy)
                     fov_recompute = True # change fov only on move
-                    print('player location: {0}, {1}'.format(player.x, player.y))
+
+                # increase heal counter after expending player move
+                player.fighter.passive_heal()
 
                 game_state = GameStates.ENEMY_TURN
 
         # handle waiting
         elif wait:
+
+            # increase heal counter after expending player move
+            player.fighter.passive_heal()
+
             game_state = GameStates.ENEMY_TURN
 
         # handle item pickup
@@ -137,6 +143,9 @@ def play_game(player, entities, game_map, message_log, game_state, con, panel, c
                 if entity.item and entity.x == player.x and entity.y == player.y:
                     pickup_results = player.inventory.add_item(entity)
                     player_turn_results.extend(pickup_results)
+
+                    # increase heal counter after expending player move
+                    player.fighter.passive_heal()
 
                     break # only allow one item at a time
 
@@ -166,7 +175,6 @@ def play_game(player, entities, game_map, message_log, game_state, con, panel, c
         if take_stairs and game_state == GameStates.PLAYER_TURN:
             for entity in entities:
                 if entity.stairs and entity.x == player.x and entity.y == player.y:
-                    print('constants in ENGINE {0}'.format(constants))
                     entities = game_map.next_floor(player, message_log, constants)
                     fov_map = initialize_fov(game_map)
                     fov_recompute = True
@@ -226,7 +234,7 @@ def play_game(player, entities, game_map, message_log, game_state, con, panel, c
             tcod.console_set_fullscreen(not tcod.console_is_fullscreen())
 
 
-        # could use a refacor here: handle_turn_result
+        # could use a refacor here: handle_turn_result?
         for player_turn_result in player_turn_results:
             message = player_turn_result.get('message')
             dead_entity = player_turn_result.get('dead')

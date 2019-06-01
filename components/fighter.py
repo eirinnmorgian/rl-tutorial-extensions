@@ -7,7 +7,7 @@ from random import randint
 from random_utils import roll
 
 class Fighter:
-    def __init__(self, hp, base_to_hit, base_damage, base_defense, xp=0):
+    def __init__(self, hp, base_to_hit, base_damage, base_defense, xp=0, passive_healing=None):
 
         self.base_max_hp = hp
         self.hp = hp
@@ -18,6 +18,7 @@ class Fighter:
         
         self.xp = xp
 
+        self.passive_healing = passive_healing
 
 
     @property
@@ -53,7 +54,7 @@ class Fighter:
                 number = die.get('number')
                 sides = die.get('sides')
                 min_damage += number
-                max_damage += sides
+                max_damage += (sides * number)
 
         return [min_damage, max_damage]
     
@@ -85,6 +86,15 @@ class Fighter:
 
 
 
+    def passive_heal(self):
+        self.passive_healing.counter += 1
+
+        if self.passive_healing.counter >= self.passive_healing.turnover:
+            self.heal(self.passive_healing.rate)
+            self.passive_healing.counter = 0
+
+
+
     def defend(self):
         # code here in case we want to randomize defense (dodge roll, saves, etc)
         return self.defense
@@ -105,14 +115,10 @@ class Fighter:
             if self.owner and self.owner.equipment:
                 dice = self.owner.equipment.damage_dice
 
-                print('has dice')
-
                 for die in dice:
                     number = die.get('number')
                     sides = die.get('sides')
                     damage += roll(number, sides)
-
-                    print('rolled dice')
 
 
             if damage > 0:
@@ -135,3 +141,11 @@ class Fighter:
                 })
 
         return results
+
+
+
+class PassiveHealing:
+    def __init__(self, turnover, rate):
+        self.counter = 0
+        self.turnover = turnover
+        self.rate = rate

@@ -39,6 +39,4 @@ def roll(dice_number, dice_sides):
         accumulator += randint(1, dice_sides)
         count += 1
 
-    print(accumulator)
-
     return accumulator

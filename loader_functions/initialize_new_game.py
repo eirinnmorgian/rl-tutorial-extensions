@@ -1,6 +1,6 @@
 import tcod
 
-from components.fighter import Fighter
+from components.fighter import Fighter, PassiveHealing
 from components.inventory import Inventory
 from components.level import Level
 from components.equipment import Equipment
@@ -78,7 +78,8 @@ def get_constants():
 def get_game_variables(constants):
 
 # init components and compose them into the player
-    fighter_component = Fighter(hp=100, base_defense=11, base_damage=2, base_to_hit=1)
+    passive_healing_component = PassiveHealing(turnover=10, rate=1)
+    fighter_component = Fighter(hp=100, base_defense=11, base_damage=2, base_to_hit=1, passive_healing=passive_healing_component)
     inventory_component = Inventory(capacity=26)
     level_component = Level()
     equipment_component = Equipment()

@@ -1,0 +1,13 @@
+{
+    "orc": {
+        "from_dungeon_level": [[80, 1]],
+        "hp": 20,
+        "base_defense": 10,
+        "base_damage": 4,
+        "base_to_hit": 2,
+        "xp": 35,
+        "char": "o",
+        "color": "desaturated_green",
+        "name": "Orc"
+    }
+}

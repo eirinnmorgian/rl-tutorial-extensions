@@ -1,6 +1,6 @@
 {
     "short_sword": {
-        "from_dungeon_level": [100, 1],
+        "from_dungeon_level": [[5, 4]],
         "slot": "MAIN_HAND",
         "damage_dice": {
             "number": 1,
@@ -9,5 +9,26 @@
         "char": "/",
         "color": "sky",
         "name": "Shortsword"
+    },
+
+    "small_shield": {
+        "from_dungeon_level": [[15, 8]],
+        "slot": "OFF_HAND",
+        "defense_bonus": 1,
+        "char": "[",
+        "color": "darker_orange",
+        "name": "Shield"
+    },
+
+    "long_sword": {
+        "from_dungeon_level": [[5, 8]],
+        "slot": "MAIN_HAND",
+        "damage_dice": {
+            "number": 1,
+            "sides": 8
+        },
+        "char": "/",
+        "color": "light_purple",
+        "name": "Longsword"
     }
 }
