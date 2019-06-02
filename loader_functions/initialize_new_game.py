@@ -14,6 +14,8 @@ from map_objects.game_map import GameMap
 from render_functions import RenderOrder
 from equipment_slots import EquipmentSlots
 
+from create_equipment import create_weapon
+
 
 def get_constants():
     WINDOW_TITLE = 'W I T C H'
@@ -119,31 +121,33 @@ def get_game_variables(constants):
     )
     entities = [player]
 
-    # instantiate starting weapon, add to inventory, and equip
-    with open('data_files/equipment.json') as f:
-        equipment = json.load(f)
+    # # instantiate starting weapon, add to inventory, and equip
+    # with open('data_files/equipment.json') as f:
+    #     equipment = json.load(f)
 
-    dagger = equipment['dagger']  
+    # dagger = equipment['dagger']  
 
-    slot = getattr(EquipmentSlots, dagger['slot'])
-    damage_dice = dagger['damage_dice']
-    char = dagger['char']
-    color = getattr(tcod, dagger['color'])
-    name = dagger['name']
+    # slot = getattr(EquipmentSlots, dagger['slot'])
+    # damage_dice = dagger['damage_dice']
+    # char = dagger['char']
+    # color = getattr(tcod, dagger['color'])
+    # name = dagger['name']
 
-    equippable_component = Equippable(
-        slot,
-        damage_dice=damage_dice
-    )
+    # equippable_component = Equippable(
+    #     slot,
+    #     damage_dice=damage_dice
+    # )
 
-    starting_weapon = Entity(
-        0, 
-        0, 
-        char, 
-        color, 
-        name,
-        equippable=equippable_component
-    )
+    # starting_weapon = Entity(
+    #     0, 
+    #     0, 
+    #     char, 
+    #     color, 
+    #     name,
+    #     equippable=equippable_component
+    # )
+
+    starting_weapon = create_weapon('dagger', 0, 0)
 
     player.inventory.add_item(starting_weapon)
     player.equipment.toggle_equip(starting_weapon)

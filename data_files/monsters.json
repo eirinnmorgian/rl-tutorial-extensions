@@ -1,25 +1,27 @@
 {
     "orc": {
         "from_dungeon_level": [[80, 1]],
-        "hp": 20,
+        "hp": 10,
         "base_defense": 10,
-        "base_damage": 4,
-        "base_to_hit": 2,
+        "base_damage": 0,
+        "base_to_hit": 0,
         "xp": 35,
         "char": "o",
         "color": "desaturated_green",
-        "name": "Orc"
+        "name": "Orc",
+        "starting_weapon": "warhammer"
     },
 
     "troll": {
         "from_dungeon_level": [[15, 3], [30, 5], [60, 7]],
-        "hp": 30,
+        "hp": 20,
         "base_defense": 12,
-        "base_damage": 8,
-        "base_to_hit": 4,
+        "base_damage": 2,
+        "base_to_hit": 2,
         "xp": 100,
         "char": "T",
         "color": "darker_green",
-        "name": "Troll"
+        "name": "Troll",
+        "starting_weapon": "warhammer"
     }
 }

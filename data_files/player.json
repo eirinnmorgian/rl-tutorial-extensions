@@ -4,7 +4,7 @@
         "rate": 1
     },
     "fighter": {
-        "hp": 100,
+        "hp": 10,
         "base_defense": 11,
         "base_damage": 2,
         "base_to_hit": 1

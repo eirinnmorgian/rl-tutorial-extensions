@@ -18,8 +18,10 @@ from components.fighter import Fighter
 from components.ai import BasicMonster
 from components.item import Item
 from components.stairs import Stairs
-from components.equipment import EquipmentSlots
+from components.equipment import EquipmentSlots, Equipment
 from components.equippable import Equippable
+
+from create_equipment import create_weapon
 
 
 class GameMap:
@@ -227,10 +229,12 @@ class GameMap:
                     char = orc['char']
                     color = getattr(tcod, orc['color'])
                     name = orc['name']
+                    starting_weapon = orc['starting_weapon']
 
                     # init fighter and ai components
                     fighter_component = Fighter(hp=hp, base_defense=base_defense, base_damage=base_damage, base_to_hit=base_to_hit, xp=xp)
                     ai_component = BasicMonster()
+                    equipment_component = Equipment()
 
                     monster = Entity(
                         x, 
@@ -241,8 +245,12 @@ class GameMap:
                         blocks=True,
                         render_order=RenderOrder.ACTOR,
                         fighter=fighter_component,
-                        ai=ai_component
+                        ai=ai_component,
+                        equipment=equipment_component
                     )
+
+                    weapon = create_weapon(starting_weapon, 0, 0)
+                    monster.equipment.toggle_equip(weapon)
 
                 elif monster_choice == 'troll':
 
@@ -254,10 +262,12 @@ class GameMap:
                     char = troll['char']
                     color = getattr(tcod, troll['color'])
                     name = troll['name']
+                    starting_weapon = troll['starting_weapon']
 
                     # init fighter and ai components
                     fighter_component = Fighter(hp=hp, base_defense=base_defense, base_damage=base_damage, base_to_hit=base_to_hit, xp=xp)
                     ai_component = BasicMonster()
+                    equipment_component = Equipment()
 
                     monster = Entity(
                         x, 
@@ -268,8 +278,13 @@ class GameMap:
                         blocks=True,
                         render_order=RenderOrder.ACTOR,
                         fighter=fighter_component,
-                        ai=ai_component
+                        ai=ai_component,
+                        equipment=equipment_component
                     )
+
+                    weapon = create_weapon(starting_weapon, 0, 0)
+                    monster.equipment.toggle_equip(weapon)
+
                 entities.append(monster)
 
         # place items
@@ -308,7 +323,7 @@ class GameMap:
                 elif item_choice == 'confusion_scroll':
 
                     targeting = confusion_scroll['targeting']
-                    targeting_message = Message(confusion_scroll['targeting_message'], confusion_scroll['message_color'])
+                    targeting_message = Message(confusion_scroll['targeting_message'], getattr(tcod, confusion_scroll['message_color']))
                     char = confusion_scroll['char']
                     color = getattr(tcod, confusion_scroll['color'])
                     name = confusion_scroll['name']
@@ -332,7 +347,7 @@ class GameMap:
                 elif item_choice == 'fireball_scroll':
 
                     targeting = fireball_scroll['targeting']
-                    targeting_message = Message(fireball_scroll['targeting_message'], fireball_scroll['message_color'])
+                    targeting_message = Message(fireball_scroll['targeting_message'], getattr(fireball_scroll['message_color']))
                     damage = fireball_scroll['damage']
                     radius = fireball_scroll['radius']
                     char = fireball_scroll['char']
@@ -382,45 +397,11 @@ class GameMap:
 
                 elif item_choice == 'short_sword':
 
-                    slot = getattr(EquipmentSlots, short_sword['slot'])
-                    damage_dice = short_sword['damage_dice']
-                    char = short_sword['char']
-                    color = getattr(tcod, short_sword['color'])
-                    name = short_sword['name']
-
-                    equippable_component = Equippable(
-                        slot,
-                        damage_dice=damage_dice
-                    )
-                    item = Entity(
-                        x, 
-                        y, 
-                        char, 
-                        color, 
-                        name,
-                        equippable=equippable_component
-                    )
+                    item = create_weapon('short_sword', x, y)
 
                 elif item_choice == 'long_sword':
 
-                    slot = getattr(EquipmentSlots, long_sword['slot'])
-                    damage_dice = long_sword['damage_dice']
-                    char = long_sword['char']
-                    color = getattr(tcod, long_sword['color'])
-                    name = long_sword['name']
-
-                    equippable_component = Equippable(
-                        slot,
-                        damage_dice=damage_dice
-                    )
-                    item = Entity(
-                        x, 
-                        y, 
-                        char, 
-                        color, 
-                        name,
-                        equippable=equippable_component
-                    )
+                    item = create_weapon('long_sword', x, y)
 
                 elif item_choice == 'small_shield':
 
